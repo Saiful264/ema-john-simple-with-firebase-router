@@ -1,11 +1,17 @@
 import React, { useContext, useState } from 'react';
 import './Login.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Providers/AuthProvider';
 
 const Login = () => {
     const {signIn} = useContext(AuthContext);
     const [error, setError] = useState();
+    const navigate = useNavigate();
+    const location = useLocation();
+    console.log(location);
+    const [show, setShow] = useState(false);
+
+    const from = location.state?.from?.pathname || '/';
 
     const handleLogin = event =>{
         event.preventDefault();
@@ -20,6 +26,7 @@ const Login = () => {
             const logedUser = result.user;
             console.log(logedUser);
             form.reset();
+            navigate(from, {relative: true});
         })
         .catch(error =>{
             console.log(error);
@@ -38,7 +45,10 @@ const Login = () => {
                 </div>
                 <div className='form-control'>
                     <label htmlFor="password">Password</label>
-                    <input type="password" name="password" id="" required/>
+                    <input type={show ? "text" : "password"} name="password" id="" required/>
+                    <p onClick={()=> setShow(!show)}>{
+                        show ? <span>Hide password</span> : <span>Show password</span>
+                    }<small></small></p>
                 </div>
                 <input className='btn-submit' type="submit" value="LogIn" />
             </form>
